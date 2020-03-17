@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from '../../app.reducers';
-import { AgregarTodoAction } from '../todo.actions';
+import { agregar_todo } from '../todo.actions';
+
 
 
 @Component({
@@ -25,7 +26,7 @@ export class TodoAddComponent implements OnInit {
     if( this.inputText.valid) {
       // Capturamos el valor de la tarea ingresada y creamos una instancia de nuetra acción.
       const todoText = this.inputText.value;
-      const action: AgregarTodoAction = new AgregarTodoAction(todoText);
+      const action = agregar_todo({ text: todoText });
 
       // Llamamos al método dispatch para disparar nuestro reducer y generar un cambio de Estado.
       this.store.dispatch( action );

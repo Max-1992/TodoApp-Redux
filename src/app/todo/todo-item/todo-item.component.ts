@@ -3,7 +3,9 @@ import { Todo } from '../models/todo.model';
 import { FormControl, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
-import { ToggleTodoAction, EditTodoAction, DeleteTodoAction } from '../todo.actions';
+
+// Import actions
+import * as actions from '../todo.actions';
 
 @Component({
   selector: 'app-todo-item',
@@ -26,8 +28,7 @@ export class TodoItemComponent implements OnInit {
     this.textInput = new FormControl(this.todo.text, Validators.required);
 
     this.checkInput.valueChanges.subscribe( checkValue => {
-        const id  = this.todo.id;
-        const action: ToggleTodoAction = new ToggleTodoAction( id );
+        const action = actions.toggle_todo({ id: this.todo.id });
         this.store.dispatch( action );
     });
   }
@@ -43,13 +44,13 @@ export class TodoItemComponent implements OnInit {
     this.edit = false;
 
     if( this.textInput.valid && this.textInput.value !== this.todo.text ) { 
-      const action: EditTodoAction = new EditTodoAction( this.todo.id, this.textInput.value );
+      const action = actions.edit_todo({ id: this.todo.id, text: this.textInput.value });
       this.store.dispatch( action );
     }
   }
 
   deleteTodo() {
-    const action: DeleteTodoAction = new DeleteTodoAction( this.todo.id );
+    const action = actions.delete_todo({ id: this.todo.id });
     this.store.dispatch( action ); 
   }
 

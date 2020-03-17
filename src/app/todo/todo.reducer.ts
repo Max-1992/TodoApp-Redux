@@ -1,4 +1,10 @@
-import { Actions, AGREGAR_TODO, TOGGLE_TODO, EDIT_TODO, DELETE_TODO, TOGGLE_ALL_TODO, CLEAR_COMPLETE } from './todo.actions';
+// Import NgRx
+import { createReducer, on } from '@ngrx/store';
+
+// Import Actions
+import * as actions from './todo.actions';
+
+// Import Model
 import { Todo } from './models/todo.model';
 
 const todo1 = new Todo('App para node.js')
@@ -6,18 +12,18 @@ const todo1 = new Todo('App para node.js')
 // Definimos el Estado inicial de nuestra aplicación.
 const initialState: Todo[] = [todo1];
 
-// Definimos el Reducer del Modulo de Todo.
-export const TodoReducer = ( state = initialState, action: Actions ): Todo[] => {
-
-    switch ( action.type ) {
-        case AGREGAR_TODO:
-            const todo = new Todo( action.text );
-            return [ ...state, todo ]; // Recordemos el concepto de mantener la inmutabilidad de los datos.
-        case TOGGLE_TODO:
-            // Vamos a mapear nuestro array para verificar que elemento hace match.
-            return state.map( todoEdit => {
+// Create private Reducer
+const _TodoReducer = createReducer(initialState,
+    
+        on(actions.agregar_todo, (state, { text }) => {
+            const todo = new Todo( text );
+            return [ ...state, todo ];
+        }),
+        on(actions.toggle_todo, (state, { id }) => {
+             // Vamos a mapear nuestro array para verificar que elemento hace match.
+             return state.map( todoEdit => {
                 // Validaremos si un elmento se encuentra dentro de nuestro array.
-                if ( todoEdit.id === action.id ) {
+                if ( todoEdit.id === id ) {
                     // Una vez encontrado el elemento vamos a crear un nuevo array y devolverlo modificando los campos de nuestro interes.
                     return {
                         ...todoEdit,
@@ -27,30 +33,32 @@ export const TodoReducer = ( state = initialState, action: Actions ): Todo[] => 
                     return todoEdit;
                 };
             });
-        case EDIT_TODO:
+        }),
+        on(actions.edit_todo, (state, { id, text } ) => {
             return state.map( todoEdit => {
-                if( todoEdit.id === action.id ) {
+                if( todoEdit.id === id ) {
                     return {
                         ...todoEdit,
-                        text: action.text
+                        text: text
                     }
                 } else {
                     return todoEdit;
                 }
             });
-        case DELETE_TODO:
-            return state.filter( todo => todo.id !== action.id );
-        case TOGGLE_ALL_TODO:
-                return state.map( todo => {
-                    return {
-                        ...todo,
-                        complete: action.complete
-                    }
-                });
-        
-        case CLEAR_COMPLETE:
-                return state.filter( todo => !todo.complete );
-        default:
-            return state
-    }
+        }),
+        on(actions.delete_todo, (state, { id } ) => state.filter( todo => todo.id !== id )),
+        on(actions.toggle_all_todo, (state, { complete } ) => {
+            return state.map( todo => {
+                return {
+                    ...todo,
+                    complete: complete
+                }
+            });
+        }),
+        on(actions.clear_complete, state => state.filter( todo => !todo.complete ))
+    
+    );
+
+export function TodoReducer( state, action ) {
+    return _TodoReducer(state, action);
 }

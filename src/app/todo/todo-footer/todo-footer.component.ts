@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FilterValid, SetFilterAction } from '../../filter/filter.actions';
+import { FilterValid, set_filter } from '../../filter/filter.actions';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/app.reducers';
 import { Todo } from '../models/todo.model';
-import { ClearCompleteAction } from '../todo.actions';
+
+// Import actions
+import * as actions from '../todo.actions';
+
 
 
 @Component({
@@ -27,7 +30,7 @@ export class TodoFooterComponent implements OnInit {
   }
 
   cambiarFilter( filter: FilterValid ) {
-    const action: SetFilterAction = new SetFilterAction( filter );
+    const action = set_filter({ filter: filter });
     this.store.dispatch( action );
   }
 
@@ -36,9 +39,8 @@ export class TodoFooterComponent implements OnInit {
   }
 
   clearComplete() {
-    const action: ClearCompleteAction = new ClearCompleteAction();
+    const action = actions.clear_complete();
     this.store.dispatch( action );
   }
-
 
 }

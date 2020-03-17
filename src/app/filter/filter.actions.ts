@@ -1,16 +1,9 @@
-import { Action } from '@ngrx/store';
-
-// Definir acciones
-export const SET_FILTER = "[FILTER] Set Filter";
+// Import NgRx
+import { createAction, props } from '@ngrx/store';
 
 // Creamos las Acciones
-export class SetFilterAction implements Action {
-    readonly type = SET_FILTER;
+export const set_filter = createAction('[FILTER] Set Filter', props<{ filter: FilterValid }>());
 
-    constructor( public filter: FilterValid ) {}
-}
 
 // Permite tipar los filtros aceptados en nuestor pyload.
 export type FilterValid = 'todos' | 'complete' | 'pending';
-
-export type Actions = SetFilterAction;

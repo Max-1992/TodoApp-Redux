@@ -1,14 +1,12 @@
-import { Actions, FilterValid, SET_FILTER } from './filter.actions';
+import { FilterValid, set_filter } from './filter.actions';
+import { createReducer, on } from '@ngrx/store';
 
 const initialState: FilterValid = 'todos';
 
-export const FilterReducer = ( state = initialState, action: Actions ): FilterValid => {
+const _FilterReducer = createReducer(initialState, 
+        on(set_filter, (state, { filter }) => filter )
+    );
 
-    switch ( action.type ) {
-        case SET_FILTER:
-            return action.filter;
-    
-        default:
-            return state;
-    }
+export function FilterReducer( state, action ) {
+    return _FilterReducer(state, action);
 }
